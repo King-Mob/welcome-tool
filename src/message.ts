@@ -1,10 +1,8 @@
-import { v4 as uuidv4 } from "uuid";
 import { PERSON_NAME, ROLE_NAME } from "./constants";
-import { getPseudoState, setPseudoState } from "./pseudoState";
 
 const hello = async () => {
   return {
-    message: `🤖Example Tool🤖: Hello I'm the matrix example tool. 
+    message: `🤖Welcome Tool🤖: Hello I'm the matrix example tool. 
     I track who has been assigned roles in this group. 
     React to this message with:\n
     ❤️ to see the current assigned roles\n
@@ -23,34 +21,6 @@ const sendPersonRequest = (replyText: string) => {
   }
 };
 
-export const assignRole = async (
-  personName: string,
-  roomId: string,
-  roleName: string
-) => {
-  let roleState = await getPseudoState(roomId);
-
-  if (!roleState) {
-    roleState = {
-      assignedRoles: [],
-    };
-  }
-
-  const { assignedRoles } = roleState;
-  assignedRoles.push({
-    id: uuidv4(),
-    person: {
-      name: personName,
-    },
-    role: {
-      name: roleName,
-    },
-  });
-
-  setPseudoState(roomId, { assignedRoles });
-
-  return { message: `You've assigned ${personName} the role ${roleName}.` };
-};
 
 const handleReply = async (event, botUserId) => {
   const roomId = event.room_id;
@@ -65,10 +35,6 @@ const handleReply = async (event, botUserId) => {
   if (expecting === PERSON_NAME) {
     return sendPersonRequest(replyText);
   }
-  if (expecting === ROLE_NAME) {
-    const personName = prevEvent.content.context.person.name;
-    return assignRole(personName, roomId, replyText);
-  }
 };
 
 const handleMessage = async (event, botUserId) => {
@@ -80,7 +46,7 @@ const handleMessage = async (event, botUserId) => {
   }
 
   //if message has the tool's wake word, say hello
-  if (message.includes("example")) {
+  if (message.includes("!welcome")) {
     return hello();
   }
 };

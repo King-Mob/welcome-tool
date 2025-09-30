@@ -9,5 +9,5 @@ export type AssignedRole = {
 }
 
 export type State = {
-    assignedRoles: AssignedRole[]
+    message: string;
 }

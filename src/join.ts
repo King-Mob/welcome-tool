@@ -23,7 +23,7 @@ const showAssignedRoles = async (roomId: string) => {
   return messages;
 };
 
-const assignNewRole = async () => {
+export const setWelcome = async (roomId: string, welcomeMessage: string) => {
   return {
     message: "You're assigning a role. Quote-reply to this message with the name of the person receiving the role.",
     context: {
@@ -58,30 +58,10 @@ export const removeRole = async (roomId: string, roleId: string) => {
   return { message: `You have removed the role ${roleToRemove.role.name} from ${roleToRemove.person.name}` };
 };
 
-const handleReaction = async (event, botUserId) => {
-  const reactionInfo = event.content["m.relates_to"];
-  const eventFromReaction = event.prevEvent;
-
-  if (eventFromReaction.sender !== botUserId) return;
-
-  const reactionEmoji = reactionInfo.key.trim();
-
-  //match the reaction to the outcome
-  if (reactionEmoji.includes("❤️")) {
-    return showAssignedRoles(event.room_id);
-  }
-  if (reactionEmoji.includes("👍")) {
-    return assignNewRole();
-  }
-  if (reactionEmoji.includes("🙏")) {
-    const roomId = event.room_id;
-    const roleId = eventFromReaction.content.context.id;
-
-    return removeRole(roomId, roleId);
-  }
-
+const handleJoin = async (event, botUserId) => {
+  const welcomeMessage = `hello there`
   //reaction not recognised
-  return "🤖Example Tool🤖: Sorry, I don't know that reaction."
+  return `🤖Welcome Tool🤖: ${welcomeMessage}`
 };
 
-export default handleReaction;
+export default handleJoin;

@@ -2,23 +2,22 @@ import express from "express";
 import * as fs from "fs";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
-import handleMessage, { assignRole } from "./messages";
-import handleReaction, { removeRole } from "./reactions";
+import handleMessage from "./message";
+import handleJoin, { setWelcome } from "./join";
 import { getPseudoState } from "./pseudoState";
 
-const port = 5049;
+const port = 5051;
 
 const moduleRegistration = {
-  id: "example",
+  id: "welcome",
   uuid: uuidv4(),
   url: `http://localhost:${port}`,
-  emoji: "👍",
-  wake_word: "example",
-  title: "Example App",
-  description: "This module manages a list of roles",
+  emoji: "🐙",
+  wake_word: "!welcome",
+  title: "Auto Welcome Bot",
+  description: "This module creates an auto-welcome for new users joining your group",
   event_types: [
-    "m.room.message",
-    "m.reaction"
+    "m.room.join"
   ]
 }
 
@@ -27,7 +26,6 @@ function generateRegistrationFile() {
 }
 
 async function start() {
-
   const app = express();
   app.use(express.json());
 
@@ -46,15 +44,15 @@ async function start() {
     if (event.type === "m.room.message")
       response = await handleMessage(event, botUserId);
 
-    if (event.type === "m.reaction")
-      response = await handleReaction(event, botUserId);
+    if (event.type === "m.room.join")
+      response = await handleJoin(event, botUserId);
 
     console.log(response)
 
     res.send({ success: true, response });
   });
 
-  app.get("/api/state", async (req, res) => {
+  app.get("/api/welcome", async (req, res) => {
     const { roomId } = req.query;
 
     const state = await getPseudoState(roomId as string);
@@ -62,21 +60,13 @@ async function start() {
     res.send(state || { assignedRoles: [] });
   })
 
-  app.post("/api/role", async (req, res) => {
+  app.post("/api/welcome", async (req, res) => {
     const { roomId } = req.query;
-    const { personName, roleName } = req.body;
+    const { welcomeMessage } = req.body;
 
-    await assignRole(personName, roomId as string, roleName);
+    await setWelcome(roomId as string, welcomeMessage);
 
     res.send({ success: true })
-  })
-
-  app.delete("/api/role", async (req, res) => {
-    const { roomId, roleId } = req.query;
-
-    await removeRole(roomId as string, roleId as string);
-
-    res.send({ success: true });
   })
 
   app.listen(port);
