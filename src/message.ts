@@ -1,26 +1,12 @@
-import { PERSON_NAME, ROLE_NAME } from "./constants";
+import { getWelcomeMessage, setWelcome } from "./join";
 
-const hello = async () => {
+const hello = async (roomId: string) => {
+  const welcomeMessage = await getWelcomeMessage(roomId);
+
   return {
-    message: `🤖Welcome Tool🤖: Hello I'm the matrix example tool. 
-    I track who has been assigned roles in this group. 
-    React to this message with:\n
-    ❤️ to see the current assigned roles\n
-    👍 to assign a role to someone`};
+    message: `🤖Welcome Tool🤖: Hello I'm the welcome tool. \n\nI say "${welcomeMessage}" to anyone new joining this group. Reply to this message to update the welcome message`
+  };
 };
-
-const sendPersonRequest = (replyText: string) => {
-  return {
-    message: `Quote-reply to this message with the name of the role you want to assign to ${replyText}.`,
-    context: {
-      person: {
-        name: replyText,
-      },
-      expecting: ROLE_NAME,
-    }
-  }
-};
-
 
 const handleReply = async (event, botUserId) => {
   const roomId = event.room_id;
@@ -30,11 +16,7 @@ const handleReply = async (event, botUserId) => {
 
   if (prevEvent.sender !== botUserId) return;
 
-  const { expecting } = prevEvent.content.context;
-
-  if (expecting === PERSON_NAME) {
-    return sendPersonRequest(replyText);
-  }
+  return setWelcome(roomId, replyText);
 };
 
 const handleMessage = async (event, botUserId) => {
@@ -47,7 +29,7 @@ const handleMessage = async (event, botUserId) => {
 
   //if message has the tool's wake word, say hello
   if (message.includes("!welcome")) {
-    return hello();
+    return hello(event.room_id);
   }
 };
 

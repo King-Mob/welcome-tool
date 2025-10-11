@@ -1,3 +1,7 @@
+# DuckDB
+*.db
+*.db.wal
+
 # Logs
 logs
 *.log

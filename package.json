@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@duckdb/node-api": "^1.4.1-r.1",
     "express": "^5.1.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",

@@ -3,8 +3,8 @@ import * as fs from "fs";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
 import handleMessage from "./message";
-import handleJoin, { setWelcome } from "./join";
-import { getPseudoState } from "./pseudoState";
+import handleJoin, { setWelcome, getWelcomeMessage } from "./join";
+import { startDuckDB } from "./duckdb";
 
 const port = 5051;
 
@@ -17,7 +17,7 @@ const moduleRegistration = {
   title: "Auto Welcome Bot",
   description: "This module creates an auto-welcome for new users joining your group",
   event_types: [
-    "m.room.join"
+    "m.room.member", "m.room.message"
   ]
 }
 
@@ -28,6 +28,7 @@ function generateRegistrationFile() {
 async function start() {
   const app = express();
   app.use(express.json());
+  await startDuckDB()
 
   app.get("/", async (req, res) => {
     const htmlPath = path.resolve(__dirname, "../../web/dist/index.html")
@@ -38,16 +39,17 @@ async function start() {
   app.post("/", async (req, res) => {
     const { event, botUserId } = req.body;
 
-    console.log(event)
-    let response = {};
+    console.log("event received", event)
+    let response;
 
     if (event.type === "m.room.message")
       response = await handleMessage(event, botUserId);
 
-    if (event.type === "m.room.join")
-      response = await handleJoin(event, botUserId);
+    if (event.type === "m.room.member" && event.content.membership === "join") {
+      response = await handleJoin(event);
+    }
 
-    console.log(response)
+    console.log("response", response);
 
     res.send({ success: true, response });
   });
@@ -55,9 +57,9 @@ async function start() {
   app.get("/api/welcome", async (req, res) => {
     const { roomId } = req.query;
 
-    const state = await getPseudoState(roomId as string);
+    const welcome = await getWelcomeMessage(roomId as string);
 
-    res.send(state || { assignedRoles: [] });
+    res.send(welcome);
   })
 
   app.post("/api/welcome", async (req, res) => {

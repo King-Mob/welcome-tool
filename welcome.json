@@ -1,0 +1,1 @@
+{"id":"welcome","uuid":"053bb586-7a86-4070-967b-197c691abcac","url":"http://localhost:5051","emoji":"🐙","wake_word":"!welcome","title":"Auto Welcome Bot","description":"This module creates an auto-welcome for new users joining your group","event_types":["m.room.member","m.room.message"]}
