@@ -4,7 +4,10 @@ const hello = async (roomId: string) => {
   const welcomeMessage = await getWelcomeMessage(roomId);
 
   return {
-    message: `🤖Welcome Tool🤖: Hello I'm the welcome tool. \n\nI say "${welcomeMessage}" to anyone new joining this group. Reply to this message to update the welcome message`
+    message: `🤖Welcome Tool🤖: Hello I'm the welcome tool. \n\nI say "${welcomeMessage}" to anyone new joining this group. Reply to this message to update the welcome message`,
+    context: {
+      welcomeWaking: true
+    }
   };
 };
 
@@ -15,6 +18,8 @@ const handleReply = async (event, botUserId) => {
   const prevEvent = event.prevEvent;
 
   if (prevEvent.sender !== botUserId) return;
+
+  if (!prevEvent.content.context.welcomeWaking) return;
 
   return setWelcome(roomId, replyText);
 };
