@@ -31,7 +31,7 @@ async function start() {
   await startDuckDB()
 
   app.get("/", async (req, res) => {
-    const htmlPath = path.resolve(__dirname, "../../web/dist/index.html")
+    const htmlPath = path.resolve(__dirname, "../web/dist/index.html")
 
     res.sendFile(htmlPath);
   })
