@@ -2,7 +2,7 @@ import { getLinksForRoomId, insertLink } from "./duckdb";
 import { moduleRegistration } from "./index";
 
 const cleanName = (name: string) => {
-  return name.replace("@", "").split(":")[0];
+  return name.replace("@", "").split(":")[0].replace(" (WA)","");
 }
 
 const getLeaderboard = async (roomId: string) => {
@@ -12,6 +12,18 @@ const getLeaderboard = async (roomId: string) => {
   const people = []
   links.forEach(link => {
     const sender = cleanName(link.sender as string);
+
+    const linkDate = new Date(link.timestamp as number * 1000)
+    const now = Date.now();
+    const linkAge = now - linkDate.getTime();
+
+    console.log(now)
+    console.log(linkDate.getTime())
+    console.log(linkAge)
+
+    if(linkAge > 7 * 24 * 60 * 60 * 1000 * 1000)
+      return;
+
     if (!people.find(person => person.name === sender)) {
       people.push({name: sender, links: 1})
     } else {
@@ -46,7 +58,7 @@ const processContent = async (message: string, sender: string, roomId: string) =
 const handleMessage = async (event, botUserId) => {
   const message = event.content.body.toLowerCase();
 
-  processContent(message,event.sender,event.room_id);
+  processContent(message,event.displayname,event.room_id);
 
   //if message has the tool's wake word, give the leaderboard
   if (message.includes(moduleRegistration.wake_word)) {
