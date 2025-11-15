@@ -5,7 +5,7 @@ const cleanName = (name: string) => {
   return name.replace("@", "").split(":")[0].replace(" (WA)","");
 }
 
-const getLeaderboard = async (roomId: string) => {
+export const getLeaderboard = async (roomId: string) => {
 
   const links = await getLinksForRoomId(roomId);
   console.log(links);
@@ -30,7 +30,6 @@ const getLeaderboard = async (roomId: string) => {
       people.find(person => person.name === sender).links++
     }
   })
-  
 
   return `This week's leaderboard!⭐
 

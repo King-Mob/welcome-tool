@@ -2,7 +2,7 @@ import express from "express";
 import * as fs from "fs";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
-import handleMessage from "./message";
+import handleMessage, { getLeaderboard } from "./message";
 import { startDuckDB } from "./duckdb";
 
 const port = 5058;
@@ -50,20 +50,16 @@ async function start() {
     res.send({ success: true, response });
   });
 
-  app.get("/api/welcome", async (req, res) => {
+  app.get("/api/leaderboard", async (req, res) => {
     const { roomId } = req.query;
 
-    const welcome = "Leaderboard"
+    console.log(roomId)
 
-    res.send(welcome);
-  })
+    const leaderboard = await getLeaderboard(roomId as string); 
 
-  app.post("/api/welcome", async (req, res) => {
-    const { roomId } = req.query;
-    const { welcomeMessage } = req.body;
+    console.log(leaderboard)
 
-
-    res.send({ success: true })
+    res.send(leaderboard);
   })
 
   app.listen(port);
