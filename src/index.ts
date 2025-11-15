@@ -10,7 +10,7 @@ const port = 5058;
 export const moduleRegistration = {
   id: "leaderboard",
   uuid: uuidv4(),
-  url: `https://untransferable-beguilingly-lorri.ngrok-free.dev/`,
+  url: `http://localhost:${port}`,
   emoji: "🏆",
   wake_word: "leaderboard",
   title: "Linktracking Leaderboard",
