@@ -31,8 +31,8 @@ export default function App() {
 
   return (
     <div>
-      <h1>Welcome Tool dashboard</h1>
-      <p>Use the text box below to set the auto-welcome for your group.</p>
+      <h1>Leaderboard dashboard</h1>
+      <p>Here are the past leaderboards for your group.</p>
       <p>The current welcome is:</p>
       <p>{currentWelcome}</p>
       <div>

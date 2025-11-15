@@ -1,18 +1,18 @@
-import { DuckDBConnection, DuckDBInstance } from "@duckdb/node-api";
+import { DuckDBConnection, DuckDBInstance, timestampValue } from "@duckdb/node-api";
 
 let connection: DuckDBConnection;
 
 export async function startDuckDB() {
-    const welcomeDuckDBFileName = "welcome_duckdb.db";
+    const leaderboardDuckDBFileName = "leaderboard_duckdb.db";
 
-    const instance = await DuckDBInstance.create(welcomeDuckDBFileName);
+    const instance = await DuckDBInstance.create(leaderboardDuckDBFileName);
     connection = await instance.connect();
 
     const tables = [
         {
-            name: "WelcomeMessages",
+            name: "Links",
             creationCommand:
-                "CREATE TABLE WelcomeMessages (room_id VARCHAR, message VARCHAR);",
+                "CREATE TABLE Links (room_id VARCHAR, sender VARCHAR, link VARCHAR, timestamp TIMESTAMP);",
         }
     ]
 
@@ -31,28 +31,25 @@ export async function startDuckDB() {
     });
 }
 
-export async function getWelcomeMessageForRoomId(roomId: string) {
-    const getWelcome = `SELECT * FROM WelcomeMessages WHERE room_id = $1;`;
-    const prepared = await connection.prepare(getWelcome);
+export async function getLinksForRoomId(roomId: string) {
+    const getLinks = `SELECT * FROM Links WHERE room_id = $1;`;
+    const prepared = await connection.prepare(getLinks);
     prepared.bindVarchar(1, roomId);
-    const welcomeRows = await prepared.run();
-    const welcomes = await welcomeRows.getRowObjects();
-    return welcomes[0];
+    const linksRows = await prepared.run();
+    const links = await linksRows.getRowObjects();
+    return links;
 }
 
-export async function insertWelcomeMessage(roomId: string, message: string) {
-    const insertWelcome = `INSERT INTO WelcomeMessages VALUES ($1, $2);`;
-    const prepared = await connection.prepare(insertWelcome);
+export async function insertLink(roomId: string, sender: string, link: string) {
+    const insertLink = `INSERT INTO Links VALUES ($1, $2, $3, $4);`;
+    const prepared = await connection.prepare(insertLink);
     prepared.bindVarchar(1, roomId);
-    prepared.bindVarchar(2, message);
+    prepared.bindVarchar(2, sender);
+    prepared.bindVarchar(3, link);
+    const timestamp = timestampValue(BigInt(Math.floor(Date.now())))
+    prepared.bindTimestamp(4,timestamp);
     await prepared.run();
 }
 
-export async function updateWelcomeMessage(roomId: string, message: string) {
-    const updateWelcome = `UPDATE WelcomeMessages SET message = $1 WHERE room_id = $2`;
-    const prepared = await connection.prepare(updateWelcome);
-    prepared.bindVarchar(1, message);
-    prepared.bindVarchar(2, roomId);
-    await prepared.run();
-}
+
 

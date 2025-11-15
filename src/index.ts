@@ -3,21 +3,20 @@ import * as fs from "fs";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
 import handleMessage from "./message";
-import handleJoin, { setWelcome, getWelcomeMessage } from "./join";
 import { startDuckDB } from "./duckdb";
 
-const port = 5051;
+const port = 5058;
 
-const moduleRegistration = {
-  id: "welcome",
+export const moduleRegistration = {
+  id: "leaderboard",
   uuid: uuidv4(),
-  url: `http://localhost:${port}`,
-  emoji: "🐙",
-  wake_word: "!welcome",
-  title: "Auto Welcome Bot",
-  description: "This module creates an auto-welcome for new users joining your group",
+  url: `https://untransferable-beguilingly-lorri.ngrok-free.dev/`,
+  emoji: "🏆",
+  wake_word: "leaderboard",
+  title: "Linktracking Leaderboard",
+  description: "This module creates a leaderboard for linksharing in your group",
   event_types: [
-    "m.room.member", "m.room.message"
+     "m.room.message"
   ]
 }
 
@@ -45,10 +44,7 @@ async function start() {
     if (event.type === "m.room.message")
       response = await handleMessage(event, botUserId);
 
-    if (event.type === "m.room.member" && event.content.membership === "join") {
-      response = await handleJoin(event);
-    }
-
+    
     console.log("response", response);
 
     res.send({ success: true, response });
@@ -57,7 +53,7 @@ async function start() {
   app.get("/api/welcome", async (req, res) => {
     const { roomId } = req.query;
 
-    const welcome = await getWelcomeMessage(roomId as string);
+    const welcome = "Leaderboard"
 
     res.send(welcome);
   })
@@ -66,7 +62,6 @@ async function start() {
     const { roomId } = req.query;
     const { welcomeMessage } = req.body;
 
-    await setWelcome(roomId as string, welcomeMessage);
 
     res.send({ success: true })
   })
