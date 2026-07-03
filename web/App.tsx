@@ -6,14 +6,18 @@ import { getWelcomeMessage, postWelcome } from "./requests";
 export default function App() {
   const [searchParams] = useSearchParams();
   const roomId = searchParams.get("roomId");
-  const [currentWelcome, setCurrentWelcome] = useState("");
-  const [welcomeMessage, setWelcomeMessage] = useState("");
+  const [currentGroupWelcome, setCurrentGroupWelcome] = useState("");
+  const [currentDirectWelcome, setCurrentDirectWelcome] = useState("");
+  const [welcomeGroupMessage, setWelcomeGroupMessage] = useState("");
+  const [welcomeDirectMessage, setWelcomeDirectMessage] = useState("");
 
   async function loadWelcome(roomId: string) {
     const welcomeMessage = await getWelcomeMessage(roomId);
     console.log(welcomeMessage);
-    setCurrentWelcome(welcomeMessage);
-    setWelcomeMessage(welcomeMessage);
+    setCurrentGroupWelcome(welcomeMessage.group_message);
+    setCurrentDirectWelcome(welcomeMessage.direct_message);
+    setWelcomeGroupMessage(welcomeMessage.group_message);
+    setWelcomeDirectMessage(welcomeMessage.direct_message);
   }
 
   useEffect(() => {
@@ -22,9 +26,13 @@ export default function App() {
     }
   }, []);
 
-  async function updateWelcome() {
+  async function updateWelcome(directWelcome: boolean) {
     if (roomId) {
-      await postWelcome(roomId, welcomeMessage);
+      await postWelcome(
+        roomId,
+        directWelcome ? welcomeDirectMessage : welcomeGroupMessage,
+        directWelcome,
+      );
       loadWelcome(roomId);
     }
   }
@@ -33,14 +41,23 @@ export default function App() {
     <div>
       <h1>Welcome Tool dashboard</h1>
       <p>Use the text box below to set the auto-welcome for your group.</p>
-      <p>The current welcome is:</p>
-      <p>{currentWelcome}</p>
+      <p>The current group welcome is:</p>
+      <p>{currentGroupWelcome}</p>
       <div>
         <textarea
-          value={welcomeMessage}
-          onChange={(e) => setWelcomeMessage(e.target.value)}
+          value={welcomeGroupMessage}
+          onChange={(e) => setWelcomeGroupMessage(e.target.value)}
         ></textarea>
-        <button onClick={updateWelcome}>Update</button>
+        <button onClick={() => updateWelcome(false)}>Update</button>
+      </div>
+      <p>The current direct welcome is:</p>
+      <p>{currentDirectWelcome}</p>
+      <div>
+        <textarea
+          value={welcomeDirectMessage}
+          onChange={(e) => setWelcomeDirectMessage(e.target.value)}
+        ></textarea>
+        <button onClick={() => updateWelcome(true)}>Update</button>
       </div>
     </div>
   );

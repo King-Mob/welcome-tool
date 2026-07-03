@@ -1,1 +1,1 @@
-{"id":"welcome","uuid":"89d9d46c-be3c-4fd3-b823-cca4a0363322","url":"http://localhost:5051","emoji":"🐙","wake_word":"!welcome","title":"Auto Welcome Bot","description":"This module creates an auto-welcome for new users joining your group","event_types":["m.room.member","m.room.message"]}
+{"id":"welcome","uuid":"53ddeac7-0818-487d-b31f-dddccce56717","url":"http://localhost:5051","emoji":"🐙","wake_word":"!welcome","title":"Auto Welcome Bot","description":"This module creates an auto-welcome for new users joining your group","event_types":["m.room.member","m.room.message"]}

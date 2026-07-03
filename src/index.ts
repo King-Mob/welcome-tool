@@ -3,7 +3,7 @@ import * as fs from "fs";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
 import handleMessage from "./message";
-import handleJoin, { setWelcome, getWelcomeMessage } from "./join";
+import handleJoin, { setWelcome, getWelcomeMessages } from "./join";
 import { startDuckDB } from "./duckdb";
 
 const port = 5051;
@@ -57,16 +57,16 @@ async function start() {
   app.get("/api/welcome", async (req, res) => {
     const { roomId } = req.query;
 
-    const welcome = await getWelcomeMessage(roomId as string);
+    const welcome = await getWelcomeMessages(roomId as string);
 
     res.send(welcome);
   })
 
   app.post("/api/welcome", async (req, res) => {
     const { roomId } = req.query;
-    const { welcomeMessage } = req.body;
+    const { welcomeMessage, directWelcome } = req.body;
 
-    await setWelcome(roomId as string, welcomeMessage);
+    await setWelcome(roomId as string, welcomeMessage, directWelcome);
 
     res.send({ success: true })
   })

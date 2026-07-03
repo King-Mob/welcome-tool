@@ -12,7 +12,7 @@ export async function startDuckDB() {
         {
             name: "WelcomeMessages",
             creationCommand:
-                "CREATE TABLE WelcomeMessages (room_id VARCHAR, message VARCHAR);",
+                "CREATE TABLE WelcomeMessages (room_id VARCHAR, group_message VARCHAR, direct_message VARCHAR);",
         }
     ]
 
@@ -40,16 +40,17 @@ export async function getWelcomeMessageForRoomId(roomId: string) {
     return welcomes[0];
 }
 
-export async function insertWelcomeMessage(roomId: string, message: string) {
-    const insertWelcome = `INSERT INTO WelcomeMessages VALUES ($1, $2);`;
+export async function insertWelcomeMessage(roomId: string, message: string, directWelcome: boolean) {
+    const insertWelcome = `INSERT INTO WelcomeMessages (room_id, ${directWelcome ? "direct_message" : "group_message"}, ${directWelcome ? "group_message" : "direct_message"}) VALUES ($1, $2, $3);`;
     const prepared = await connection.prepare(insertWelcome);
     prepared.bindVarchar(1, roomId);
     prepared.bindVarchar(2, message);
+    prepared.bindVarchar(3, "");
     await prepared.run();
 }
 
-export async function updateWelcomeMessage(roomId: string, message: string) {
-    const updateWelcome = `UPDATE WelcomeMessages SET message = $1 WHERE room_id = $2`;
+export async function updateWelcomeMessage(roomId: string, message: string, directWelcome: boolean) {
+    const updateWelcome = `UPDATE WelcomeMessages SET ${directWelcome ? "direct_message" : "group_message"} = $1 WHERE room_id = $2`;
     const prepared = await connection.prepare(updateWelcome);
     prepared.bindVarchar(1, message);
     prepared.bindVarchar(2, roomId);

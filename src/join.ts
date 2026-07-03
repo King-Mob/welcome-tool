@@ -1,30 +1,51 @@
 import { getWelcomeMessageForRoomId, insertWelcomeMessage, updateWelcomeMessage } from "./duckdb";
 
-export const getWelcomeMessage = async (roomId: string) => {
-  const welcome = await getWelcomeMessageForRoomId(roomId) || { message: "Welcome!" };
+export const getWelcomeMessages = async (roomId: string) => {
+  const welcome = await getWelcomeMessageForRoomId(roomId);
 
-  return welcome.message;
+  return welcome || { group_message: "", direct_message: "" };
 }
 
-export const setWelcome = async (roomId: string, welcomeMessage: string) => {
+export const setWelcome = async (roomId: string, welcomeMessage: string, directWelcome: boolean) => {
   const existingWelcomeMessage = await getWelcomeMessageForRoomId(roomId);
 
   if (existingWelcomeMessage) {
-    await updateWelcomeMessage(roomId, welcomeMessage);
+    await updateWelcomeMessage(roomId, welcomeMessage, directWelcome);
   }
   else {
-    await insertWelcomeMessage(roomId, welcomeMessage);
+    await insertWelcomeMessage(roomId, welcomeMessage, directWelcome);
   }
 
   return {
-    message: `Great, I've set the welcome message to: ${welcomeMessage}`
+    message: `The ${directWelcome ? "individual" : "group"} welcome message is now: ${welcomeMessage}`
   }
 };
 
 const handleJoin = async (event) => {
-  const welcomeMessage = await getWelcomeMessage(event.room_id);
+  const welcomeMessages = await getWelcomeMessages(event.room_id);
 
-  return { message: `🤖Welcome Tool🤖: ${welcomeMessage}` };
+  const responses = [];
+
+  if (welcomeMessages.direct_message && welcomeMessages.direct_message !== "") {
+    responses.push({
+      message: welcomeMessages.direct_message,
+      context: {
+        welcomeWaking: false
+      },
+      recipient: event.sender
+    })
+  }
+
+  if (welcomeMessages.group_message && welcomeMessages.group_message !== "") {
+    responses.push({
+      message: welcomeMessages.group_message,
+      context: {
+        welcomeWaking: false
+      }
+    })
+  }
+
+  return responses;
 };
 
 export default handleJoin;
