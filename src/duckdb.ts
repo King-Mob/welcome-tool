@@ -1,11 +1,16 @@
 import { DuckDBConnection, DuckDBInstance } from "@duckdb/node-api";
+import path from "node:path";
 
 let connection: DuckDBConnection;
+let instance: DuckDBInstance;
 
 export async function startDuckDB() {
     const welcomeDuckDBFileName = "welcome_duckdb.db";
 
-    const instance = await DuckDBInstance.create(welcomeDuckDBFileName);
+    const dataDir = process.env.DUCKDB_DATA_DIR ?? path.resolve(__dirname, "../..");
+    const dbPath = path.join(dataDir, welcomeDuckDBFileName);
+
+    instance = await DuckDBInstance.create(dbPath);
     connection = await instance.connect();
 
     const tables = [
