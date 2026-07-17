@@ -13,9 +13,9 @@ const moduleRegistration = {
   uuid: uuidv4(),
   url: `http://localhost:${port}`,
   emoji: "🐙",
-  wake_word: "!welcome",
-  title: "Auto Welcome Bot",
-  description: "This module creates an auto-welcome for new users joining your group",
+  introduction: "Send !welcome to see your current welcome messages, and set new ones.",
+  title: "Welcome Sender",
+  description: "Sends a welcome message to your group and/or new members when they join.",
   event_types: [
     "m.room.member", "m.room.message"
   ]
