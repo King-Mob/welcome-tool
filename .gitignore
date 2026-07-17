@@ -1,4 +1,5 @@
-# DuckDB
+# Generated Files
+welome.json
 *.db
 *.db.wal
 
