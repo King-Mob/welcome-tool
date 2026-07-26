@@ -26,6 +26,7 @@ const handleJoin = async (event) => {
 
   const responses = [];
 
+  /*
   if (welcomeMessages.direct_message && welcomeMessages.direct_message !== "") {
     responses.push({
       message: welcomeMessages.direct_message,
@@ -35,6 +36,7 @@ const handleJoin = async (event) => {
       recipient: event.sender
     })
   }
+    */
 
   if (welcomeMessages.group_message && welcomeMessages.group_message !== "") {
     responses.push({

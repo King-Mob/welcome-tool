@@ -13,9 +13,9 @@ const moduleRegistration = {
   uuid: uuidv4(),
   url: `http://localhost:${port}`,
   emoji: "🐙",
-  introduction: "Send !welcome to see your current welcome messages, and set new ones.",
+  introduction: "Send !welcome to see your current welcome message, and set a new one.",
   title: "Welcome Sender",
-  description: "Sends a welcome message to your group and/or new members when they join.",
+  description: "Sends a welcome message to your group when new members join.",
   event_types: [
     "m.room.member", "m.room.message"
   ]

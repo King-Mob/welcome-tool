@@ -50,7 +50,8 @@ export default function App() {
         ></textarea>
         <button onClick={() => updateWelcome(false)}>Update</button>
       </div>
-      <p>The current direct welcome is:</p>
+      {/*
+          <p>The current direct welcome is:</p>
       <p>{currentDirectWelcome}</p>
       <div>
         <textarea
@@ -59,6 +60,7 @@ export default function App() {
         ></textarea>
         <button onClick={() => updateWelcome(true)}>Update</button>
       </div>
+        */}
     </div>
   );
 }

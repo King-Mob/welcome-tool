@@ -24,6 +24,7 @@ const hello = async (roomId: string) => {
     })
   }
 
+  /*
   if (welcomeMessages.direct_message && welcomeMessages.direct_message !== "") {
     responses.push({
       message: `Quote reply to this message to edit the welcome message sent directly to new group members. The message is currently: ${welcomeMessages.direct_message}`,
@@ -42,6 +43,7 @@ const hello = async (roomId: string) => {
       }
     })
   }
+    */
 
   return responses;
 };
