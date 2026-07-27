@@ -1,5 +1,5 @@
 import "./App.css";
-import { useSearchParams } from "react-router";
+import { useSearchParams, Link } from "react-router";
 import { useEffect, useState } from "react";
 import { getWelcomeMessage, postWelcome } from "./requests";
 
@@ -38,12 +38,12 @@ export default function App() {
   }
 
   return (
-    <div>
-      <h1>Welcome Tool dashboard</h1>
-      <p>Use the text box below to set the auto-welcome for your group.</p>
+    <>
+      <h1>Welcome Tool</h1>
+      <h3>Use the text box below to set the auto-welcome for your group.</h3>
       <p>The current group welcome is:</p>
       <p>{currentGroupWelcome}</p>
-      <div>
+      <div id="change-container">
         <textarea
           value={welcomeGroupMessage}
           onChange={(e) => setWelcomeGroupMessage(e.target.value)}
@@ -61,6 +61,6 @@ export default function App() {
         <button onClick={() => updateWelcome(true)}>Update</button>
       </div>
         */}
-    </div>
+    </>
   );
 }
